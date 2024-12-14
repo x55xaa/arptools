@@ -29,7 +29,7 @@ from typing import Type
 
 from . import cli
 from .modules import log
-from .parsers import MainArgumentParser
+from .parsers import Arpa, Arprobe, Arpr, Arpscan
 
 
 logger = logging.getLogger(__name__)
@@ -59,12 +59,29 @@ def init_cli_with_argument_parser(argument_parser: Type[ArgumentParser]) -> Name
         return argument_parser().parse_args()
 
 
+def arpa() -> None:
+    """Arpa CLI entry point."""
+
+    arguments: Namespace = init_cli_with_argument_parser(Arpa)
+    cli.arpa(arguments)
+
+
+def arprobe() -> None:
+    """Arprobe CLI entry point."""
+
+    arguments: Namespace = init_cli_with_argument_parser(Arprobe)
+    cli.arprobe(arguments)
+
+
+def arpscan() -> None:
+    """Arpscan CLI entry point."""
+
+    arguments: Namespace = init_cli_with_argument_parser(Arpscan)
+    cli.arpscan(arguments)
+
+
 def main() -> None:
-    """Main CLI entry point."""
+    """Arpr CLI entry point."""
 
-    arguments: Namespace = init_cli_with_argument_parser(MainArgumentParser)
-    cli.main(arguments)
-
-
-if __name__ == '__main__':
-    main()
+    arguments: Namespace = init_cli_with_argument_parser(Arpr)
+    cli.arpr(arguments)

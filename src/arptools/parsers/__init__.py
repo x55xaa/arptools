@@ -1,4 +1,11 @@
-"""..."""
+"""Contains all the argument parsers used by this package.
+
+Each module should contain a `_construct()` function that returns an
+instance of the module's argument parser. This function will be used as the `:func:`
+argument for the `argparse` directive in the docs.
+
+See https://sphinx-argparse.readthedocs.io/en/stable for more information.
+"""
 
 # Copyright (C) 2024  Stefano Cuizza
 
@@ -16,24 +23,15 @@
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-from colorama import just_fix_windows_console
-
-from .modules.metadata import authors, summary, version
+from .arpa import Arpa
+from .arprobe import Arprobe
+from .arpscan import Arpscan
+from .arpr import Arpr
 
 
 __all__ = [
-    '__author__',
-    '__version__',
+    'Arpa',
+    'Arprobe',
+    'Arpr',
+    'Arpscan',
 ]
-
-
-__author__: str = ', '.join(iter(authors()))
-"""The author(s) of the package."""
-
-__doc__: str = summary()
-
-__version__: str = version()
-"""The package full version string."""
-
-
-just_fix_windows_console()

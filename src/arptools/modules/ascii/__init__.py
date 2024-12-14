@@ -1,11 +1,4 @@
-"""Contains all the argument parsers used by this package.
-
-Each module should contain a `_construct()` function that returns an
-instance of the module's argument parser. This function will be used as the `:func:`
-argument for the `argparse` directive in the docs.
-
-See https://sphinx-argparse.readthedocs.io/en/stable for more information.
-"""
+"""Collection of ASCII graphics."""
 
 # Copyright (C) 2024  Stefano Cuizza
 
@@ -21,9 +14,3 @@ See https://sphinx-argparse.readthedocs.io/en/stable for more information.
 #
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-
-from .main import MainArgumentParser
-
-
-__all__ = ['MainArgumentParser']

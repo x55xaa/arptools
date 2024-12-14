@@ -16,5 +16,36 @@
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-__author__: str
-__version__: str
+from colorama import just_fix_windows_console
+
+from .arp import (
+    arp_announcement,
+    arp_probe,
+    arp_pscan,
+    arp_request,
+    arp_scan,
+)
+from .modules.metadata import authors, summary, version
+
+
+__all__ = [
+    '__author__',
+    '__version__',
+    'arp_announcement',
+    'arp_probe',
+    'arp_pscan',
+    'arp_request',
+    'arp_scan',
+]
+
+
+__author__: str = ', '.join(iter(authors()))
+"""The package author(s)."""
+
+__doc__: str = summary()
+
+__version__: str = version()
+"""The package version."""
+
+
+just_fix_windows_console()

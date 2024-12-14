@@ -1,12 +1,12 @@
 """This module extends colorama's ANSI codes.
 
-All AnsiType classes store only the ANSI integer codes, while Fore, Back, and Style store the formatted ANSI codes.
+All AnsiType classes store only the ANSI integer codes,
+while Fore, Back, and Style store the formatted ANSI codes.
 
 Typical usage example:
 
     print(f'{Fore.RED}helloworld!{Fore.RESET}')
 """
-
 
 # Copyright (C) 2024  Stefano Cuizza
 
@@ -24,8 +24,10 @@ Typical usage example:
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+from collections.abc import Callable
 from typing import Final
 
+from colorama.ansi import *  # noqa: F403
 from colorama.ansi import AnsiCodes
 
 
@@ -108,3 +110,19 @@ Back = AnsiBack()
 
 Style = AnsiStyle()
 """Struct containing ANSI style codes."""
+
+
+def echo_ansi(func: Callable) -> Callable[[...], None]:
+    """Function decorator that prints the output of `func` to stdout.
+
+    Mainly used to decorate functions that return an ANSI escape sequence.
+    """
+
+    def wrapper(*args, **kwargs) -> None:
+        print(func(*args, **kwargs), end='')
+
+    return wrapper
+
+
+def fg_rgb(r: int, g: int, b: int) -> str:
+    return f'{CSI}38;2;{r};{g};{b}m'  # noqa: F405

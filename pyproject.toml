@@ -5,12 +5,12 @@ requires = ["setuptools>=61.0", "setuptools-scm>=8.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tool"
-description = "A barebone Python package template for CLI tools."
+name = "arptools"
+description = "CLI tools to do network analysis with ARP packets."
 readme = "README.md"
 requires-python = ">=3.12"
 license = {file = "LICENSE"}
-keywords = ["template"]
+keywords = ["arp protocol", "networking"]
 authors = [
     { name = "Stefano Cuizza", email = "stefano.cuizza@protonmail.com" },
 ]
@@ -24,9 +24,13 @@ classifiers = [
     "Operating System :: MacOS",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
+    "Topic :: Security",
+    "Topic :: System :: Networking :: Monitoring",
 ]
 dependencies = [
+    "asciimatics",
     "colorama",
+    "scapy",
 ]
 dynamic = ["version"]
 
@@ -35,10 +39,13 @@ docs = ["myst_parser", "sphinx", "sphinx-argparse", "sphinx_autodoc_typehints", 
 testing = ["pylint", "pytest", "pytest-cov", "ruff", "tox"]
 
 [project.urls]
-"Github" = "https://github.com/x55xaa/python-tool"
+"Github" = "https://github.com/x55xaa/arptools"
 
 [project.scripts]
-tool = "tool.__main__:main"
+arpa = "arptools.__main__:arpa"
+arpr = "arptools.__main__:main"
+arprobe = "arptools.__main__:arprobe"
+arpscan = "arptools.__main__:arpscan"
 
 [tool.pylint.basic]
 include-naming-hint = true

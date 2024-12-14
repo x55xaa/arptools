@@ -1,4 +1,4 @@
-"""Command Line Interface entry point."""
+"""Contains modules for handling ARP packets."""
 
 # Copyright (C) 2024  Stefano Cuizza
 
@@ -16,23 +16,17 @@
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-from argparse import Namespace
-import logging
+from .announcement import arp_announcement
+from .packets.request import arp_request
+from .probe import arp_probe
+from .pscan import arp_pscan
+from .scan import arp_scan
 
 
-logger = logging.getLogger(__name__)
-
-
-def main(namespace: Namespace) -> None:
-    """Main CLI function.
-
-    Args:
-        namespace:
-          Namespace containing the command line parsing.
-    """
-
-    logger.debug('helloworld!')
-    logger.info('helloworld!')
-    logger.warning('helloworld!')
-    logger.error('helloworld!')
-    logger.critical('helloworld!')
+__all__ = [
+    'arp_announcement',
+    'arp_probe',
+    'arp_pscan',
+    'arp_request',
+    'arp_scan',
+]

@@ -1,5 +1,5 @@
 
-# 📦 python-tool
+# 📦 arptools
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL_v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
 ![Python version: 3.12+](https://img.shields.io/badge/python-3.12+-blue)
@@ -8,39 +8,66 @@
 
 ## Overview
 
-This project is a template for creating Python packages that follows the guidelines contained in [PEP 621](https://peps.python.org/pep-0621).
-It uses a `pyproject.toml` file to store build system requirements and package information.
+This package offers a collection of tools to perform network analysis with `ARP` packets.
 
-
-## Structure
-
-- `.github/worflows` contains GitHub actions used for building, testing, and publishing.
-- `docs` contains the package documentation, generated using Sphinx.
-- `src` contains the source code of the package.
-- `tests` contains pytest unit tests.
 
 ## Installation
 
-Install the package locally with `pip install`:
+Install the package with `pip`:
 
 ```bash
-$ pip install .
+$ pip install arptools
 ```
 
 
 ## Usage
 
-This package offers a basic CLI to play around with.
-It can be launched by running:
+### arpa
+
+Send `ARP announcements` over the network.
 
 ```bash
-$ python -m tool
+# advertises the (de:ad:be:ef:00:00, local) mapping to the network.
+$ arpa de:ad:be:ef:00:00 local
 ```
 
-Or by invoking the `tool` [console script](https://setuptools.pypa.io/en/latest/userguide/entry_point.html#console-scripts).
+
+### arprobe
+
+Send `ARP probes` over the network.
+
+```bash
+# sends ARP probes to the gateway until it responds.
+$ arprobe gateway -f
+```
+
+
+### arpscan
+
+Scans the network with ARP requests.
+
+```bash
+# scans the gateway /24 subnet using ARP probes.
+$ arpscan gateway/24 -p
+```
+
+```bash
+# extrapolates MAC/IP pairs from broadcast request packets (passive mode).
+$ arpscan gateway/24 -P
+```
+
+
+### arpr
+
+Send `ARP requests` over the network.
+
+```bash
+# sends an ARP request to the gateway with a spoofed MAC and IP source address.
+$ arpr -S de:ad:be:ef:00:00 -s 192.168.1.20 gateway
+```
 
 
 ## Documentation
 
-- [Official Documentation](https://x55xaa.github.io/package-name)
+- [Official Documentation](https://x55xaa.github.io/arptools)
 - [CHANGELOG](CHANGELOG.md)

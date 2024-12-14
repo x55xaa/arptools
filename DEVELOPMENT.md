@@ -13,8 +13,8 @@ The lowest supported Python version for my projects is _usually_ 3.12, but don't
 To install the package locally, clone the repository and run `pip install`:
 
 ```bash
-$ git clone https://github.com/x55xaa/package-name.git
-$ cd package-name
+$ git clone https://github.com/x55xaa/arptools.git
+$ cd arptools
 $ pip install .
 ```
 
