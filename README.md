@@ -70,4 +70,4 @@ $ arpr -S de:ad:be:ef:00:00 -s 192.168.1.20 gateway
 ## Documentation
 
 - [Official Documentation](https://x55xaa.github.io/arptools)
-- [CHANGELOG](CHANGELOG.md)
+- [CHANGELOG](https://github.com/x55xaa/arptools/blob/main/CHANGELOG.md)
