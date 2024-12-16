@@ -48,10 +48,10 @@ trim = true
 [git]
 commit_parsers = [
     { message = '^fix', group = "Fixed"},
-    { message = '^(build|docs|feat|perf|style): ((F|f)ix|(P|p)atch|(R|r)esolve)', group = "Fixed"},
-    { message = '^(build|docs|feat|perf|style): ((A|a)dd|(A|a)ppend|(E|e)xpand|(I|i)nsert|(I|i)ntroduce)', group = "Added"},
-    { message = '^(build|docs|feat|perf|style): ((D|d)rop|(R|r)emove)', group = "Removed"},
-    { message = '^(build|docs|feat|perf|style)', group = "Changed"},
+    { message = '^(build|feat|perf|style): ((F|f)ix|(P|p)atch|(R|r)esolve)', group = "Fixed"},
+    { message = '^(build|feat|perf|style): ((A|a)dd|(A|a)ppend|(E|e)xpand|(I|i)nsert|(I|i)ntroduce)', group = "Added"},
+    { message = '^(build|feat|perf|style): ((D|d)rop|(R|r)emove)', group = "Removed"},
+    { message = '^(build|feat|perf|style)', group = "Changed"},
     { message = '.*', skip = true },
 ]
 commit_preprocessors = [
