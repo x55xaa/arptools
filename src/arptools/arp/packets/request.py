@@ -75,7 +75,7 @@ def arp_request(
         prnfail:
             function used to print packets that have not received an answer.
     """
-
+    
     pkt = (
             Ether(dst=ethernet_dst, src=ethernet_src) /
             ARP(op='who-has', hwsrc=arp_hwsrc, psrc=arp_psrc, pdst=target_ip)
