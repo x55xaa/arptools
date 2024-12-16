@@ -51,7 +51,7 @@ def arp_announcement(
 
     def _arp_announcement_prnfail(unanswered: Packet | PacketList | SndRcvList) -> str | None:
         return '\n'.join((
-            f'\rARP announcement {pkt.pdst} ({pkt.hwsrc})' for pkt in unanswered[ARP]
+            f'\rARP ANNOUNCEMENT is-at {pkt.hwsrc} says {pkt.pdst}' for pkt in unanswered[ARP]
         ))
 
     arp_request(
