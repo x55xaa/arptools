@@ -1,6 +1,5 @@
 """Provides functions to do a network scan with ARP packets."""
-import sys
-from collections import defaultdict
+
 # Copyright (C) 2024  Stefano Cuizza
 
 #     This program is free software: you can redistribute it and/or modify
@@ -17,10 +16,12 @@ from collections import defaultdict
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+from collections import defaultdict
 from datetime import datetime
 from functools import partial
 from ipaddress import ip_address, ip_network
 from queue import SimpleQueue
+import sys
 from threading import Thread, Event
 
 
