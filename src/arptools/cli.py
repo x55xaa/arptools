@@ -24,6 +24,7 @@ from .arp import (
     arp_request,
     arp_pscan,
     arp_scan,
+    garp_reply,
 )
 
 
@@ -105,5 +106,23 @@ def arpscan(namespace: Namespace) -> None:
         target_range=namespace.destination_range,
         use_arp_probes=namespace.use_arp_probes,
         timeout=namespace.timeout,
+        verbose=0 if namespace.quiet else None,
+    )
+
+
+def garp(namespace: Namespace) -> None:
+    """Garp CLI.
+
+    Args:
+        namespace:
+          Namespace containing the command line arguments.
+    """
+
+    garp_reply(
+        mapping=namespace.mapping,
+        ethernet_src=namespace.ethernet_src,
+        ethernet_dst=namespace.ethernet_dst,
+        count=namespace.packet_count,
+        interval=namespace.interval,
         verbose=0 if namespace.quiet else None,
     )

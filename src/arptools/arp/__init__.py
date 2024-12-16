@@ -17,6 +17,8 @@
 
 
 from .announcement import arp_announcement
+from .garp import garp_reply
+from .packets.reply import arp_reply
 from .packets.request import arp_request
 from .probe import arp_probe
 from .pscan import arp_pscan
@@ -27,6 +29,8 @@ __all__ = [
     'arp_announcement',
     'arp_probe',
     'arp_pscan',
+    'arp_reply',
     'arp_request',
     'arp_scan',
+    'garp_reply',
 ]

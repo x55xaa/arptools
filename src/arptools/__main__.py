@@ -29,7 +29,7 @@ from typing import Type
 
 from . import cli
 from .modules import log
-from .parsers import Arpa, Arprobe, Arpr, Arpscan
+from .parsers import Arpa, Arprobe, Arpr, Arpscan, Garp
 
 
 logger = logging.getLogger(__name__)
@@ -78,6 +78,13 @@ def arpscan() -> None:
 
     arguments: Namespace = init_cli_with_argument_parser(Arpscan)
     cli.arpscan(arguments)
+
+
+def garp() -> None:
+    """Garp CLI entry point."""
+
+    arguments: Namespace = init_cli_with_argument_parser(Garp)
+    cli.garp(arguments)
 
 
 def main() -> None:

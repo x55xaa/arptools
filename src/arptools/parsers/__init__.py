@@ -27,6 +27,7 @@ from .arpa import Arpa
 from .arprobe import Arprobe
 from .arpscan import Arpscan
 from .arpr import Arpr
+from .garp import Garp
 
 
 __all__ = [
@@ -34,4 +35,5 @@ __all__ = [
     'Arprobe',
     'Arpr',
     'Arpscan',
+    'Garp',
 ]
