@@ -52,6 +52,7 @@ commit_parsers = [
     { message = '^(build|docs|feat|perf|style): ((A|a)dd|(A|a)ppend|(E|e)xpand|(I|i)nsert|(I|i)ntroduce)', group = "Added"},
     { message = '^(build|docs|feat|perf|style): ((D|d)rop|(R|r)emove)', group = "Removed"},
     { message = '^(build|docs|feat|perf|style)', group = "Changed"},
+    { message = '.*', skip = true },
 ]
 commit_preprocessors = [
     # replace multiple spaces with a single space.
