@@ -16,29 +16,26 @@
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-from functools import lru_cache
-import socket
 from typing import Literal
-from uuid import getnode as get_mac  # noqa: F401
 
+from scapy.arch import get_if_addr, get_if_hwaddr
 from scapy.config import conf
 
 
-# UnkwnTech (2008, October 3). Finding local IP addresses using Python's stdlib. StackOverflow.
-# https://stackoverflow.com/a/166589.
-@lru_cache
 def get_local_ip() -> str:
-    """Returns the local IP address of the machine."""
+    """Returns the IP address of the local machine."""
 
-    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-        sock.connect(('1.1.1.1', 80))
-
-        return sock.getsockname()[0]
+    return get_if_addr(conf.iface)
 
 
-@lru_cache
-def get_local_gateway() -> str:
-    """Returns the local gateway address."""
+def get_mac() -> str:
+    """Returns the MAC address of the local machine."""
+
+    return get_if_hwaddr(conf.iface)
+
+
+def get_default_gateway() -> str:
+    """Returns the IP address of the default gateway."""
 
     return conf.route.route('0.0.0.0')[2]
 
