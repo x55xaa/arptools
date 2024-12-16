@@ -36,7 +36,7 @@ from scapy.sendrecv import sniff
 from ..modules.ansi import Cursor, echo_ansi, fg_rgb, Fore
 from ..modules.ascii.animation import Animation
 from ..modules.utils import ExpirableDict
-from ..network import get_local_gateway, get_local_ip
+from ..network import get_default_gateway, get_local_ip
 
 
 class MappingModel:
@@ -243,7 +243,7 @@ class MainView(Frame):
             ).total_seconds())
 
             line_color = self._ttl_animation.frame_from_state(cttl / self._model.ttl)
-            if psrc == get_local_gateway():
+            if psrc == get_default_gateway():
                 line_color = self._LG_ENTRY_COLOR
             elif psrc == get_local_ip():
                 line_color = self._LI_ENTRY_COLOR

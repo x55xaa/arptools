@@ -23,7 +23,7 @@ import re
 
 from ..modules.utils import LazyDict
 from ..network import (
-    get_local_gateway,
+    get_default_gateway,
     get_local_ip,
     mac_dec_to_hex_notation,
 )
@@ -45,7 +45,7 @@ def ipv4_address_type(argument: str) -> str:
     # load hosts lazily to avoid crashing if one of them does not resolve.
     host_mapping = LazyDict({
         'all': (lambda i: i, '0.0.0.0',),
-        'gateway': (lambda _: get_local_gateway(), None),
+        'gateway': (lambda _: get_default_gateway(), None),
         'local': (lambda _: get_local_ip(), None),
         'localhost': (lambda i: i, '127.0.0.1',),
     })
