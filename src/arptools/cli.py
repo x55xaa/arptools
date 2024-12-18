@@ -97,7 +97,7 @@ def arpscan(namespace: Namespace) -> None:
     if namespace.passive:
         arp_pscan(
             target_range=namespace.destination_range,
-            ttl=namespace.time_to_live,
+            ttl=namespace.passive,
         )
 
         return

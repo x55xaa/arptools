@@ -25,7 +25,7 @@ from typing import Optional, override
 
 from . import types
 from ..modules.parsing.parsers import MainArgumentParserTemplate
-from ..network import get_local_ip, get_mac, mac_dec_to_hex_notation
+from ..network import get_mac
 
 
 logger = logging.getLogger(__name__)
@@ -53,17 +53,10 @@ class Garp(MainArgumentParserTemplate):
         )
 
     def _extend_arguments(self) -> None:
-        default_hardware_source = get_mac()
-        if default_hardware_source & 2 ** 40:
-            default_hardware_source = None
-        else:
-            default_hardware_source = mac_dec_to_hex_notation(
-                default_hardware_source
-            )
-
-        default_hardware_destination = 'ff:ff:ff:ff:ff:ff'
-        default_interval: float = 1.0
         default_count: int = 0
+        default_hardware_destination = types.mac_address_type('broadcast')
+        default_hardware_source = get_mac()
+        default_interval: float = 1.0
 
         self.add_argument(
             'mac',
@@ -87,7 +80,7 @@ class Garp(MainArgumentParserTemplate):
             default=None,
             dest='ethernet_src',
             help='ETHERNET source address ' +
-                 f'(default: ARP.hwsrc)',
+                 f'(default: {default_hardware_source})',
             metavar='mac',
             required=False,
             type=types.mac_address_type,
@@ -123,10 +116,8 @@ class Garp(MainArgumentParserTemplate):
             action='store',
             default=default_interval,
             dest='interval',
-            help=(
-                f'set interval between packets '
-                f'(default: {default_interval} sec)'
-            ),
+            help='set interval between packets ' +
+                f'(default: {default_interval} sec)',
             metavar='sec',
             type=types.positive_float_type,
         )

@@ -52,8 +52,8 @@ class Arprobe(MainArgumentParserTemplate):
         )
 
     def _extend_arguments(self) -> None:
-        default_interval: float = 1.0
         default_count: int = 0
+        default_interval: float = 1.0
 
         self.add_argument(
             'destination',
@@ -81,10 +81,8 @@ class Arprobe(MainArgumentParserTemplate):
             action='store',
             default=default_interval,
             dest='interval',
-            help=(
-                f'set interval between packets '
-                f'(default: {default_interval} sec)'
-            ),
+            help='set interval between packets ' +
+                f'(default: {default_interval} sec)',
             metavar='sec',
             type=types.positive_float_type,
         )

@@ -76,22 +76,13 @@ class Arpscan(MainArgumentParserTemplate):
 
         mode_group.add_argument(
             '-P', '--passive',
-            action='store_true',
-            default=False,
-            dest='passive',
-            help='extrapolate ARP associations from ARP requests',
-            required=False,
-        )
-
-        mode_group.add_argument(
-            '-t', '--ttl',
             action='store',
             default=default_time_to_live,
-            dest='time_to_live',
-            help='set a time to live for ARP packets in passive mode.' +
-                 f'(default: {default_time_to_live})',
-            metavar='sec',
+            dest='passive',
+            help='extrapolate ARP associations from ARP requests' +
+                f'(default ttl: {default_time_to_live} sec)',
             required=False,
+            type=types.strictly_positive_int_type,
         )
 
         self.add_argument(
@@ -99,10 +90,8 @@ class Arpscan(MainArgumentParserTemplate):
             action='store',
             default=default_timeout,
             dest='timeout',
-            help=(
-                'how long to wait for a reply '
-                f'(default: {default_timeout} sec)'
-            ),
+            help='how long to wait for a reply ' +
+                f'(default: {default_timeout} sec)',
             metavar='sec',
             required=False,
             type=types.positive_float_type,
