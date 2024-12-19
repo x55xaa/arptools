@@ -32,6 +32,16 @@ $ arpa de:ad:be:ef:00:00 local
 ```
 
 
+### arpr
+
+Send `ARP requests` over the network.
+
+```bash
+# sends an ARP request to the gateway with a spoofed MAC and IP source address.
+$ arpr -S de:ad:be:ef:00:00 -s 192.168.1.20 gateway
+```
+
+
 ### arprobe
 
 Send `ARP probes` over the network.
@@ -44,7 +54,7 @@ $ arprobe gateway -f
 
 ### arpscan
 
-Scans the network with ARP requests.
+Scan the network with ARP requests.
 
 ```bash
 # scans the gateway /24 subnet using ARP probes.
@@ -57,13 +67,13 @@ $ arpscan gateway/24 -P
 ```
 
 
-### arpr
+### garp
 
-Send `ARP requests` over the network.
+Send gratuitous `ARP replies`.
 
 ```bash
-# sends an ARP request to the gateway with a spoofed MAC and IP source address.
-$ arpr -S de:ad:be:ef:00:00 -s 192.168.1.20 gateway
+# sends a broadcast ARP reply advertising the (de:ad:be:ef:00:00, gateway) mapping to the network.
+$ garp de:ad:be:ef:00:00 gateway
 ```
 
 
