@@ -47,7 +47,7 @@ class Garp(MainArgumentParserTemplate):
     @override
     def __init__(self):
         super().__init__(
-            prog='arpa',
+            prog='garp',
             description='Send gratuitous ARP replies.',
             prefix_chars='-',
         )
