@@ -89,7 +89,7 @@ class Garp(MainArgumentParserTemplate):
         self.add_argument(
             '-D',
             action='store',
-            default=None,
+            default=default_hardware_destination,
             dest='ethernet_dst',
             help='ETHERNET destination address '
                  f'(default: {default_hardware_destination})',
