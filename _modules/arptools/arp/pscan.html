@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>arptools.arp.pscan &mdash; arptools 0.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=a58bc63e"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            arptools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Basic Usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Scripts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/arpa.html">arpa</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/arpr.html">arpr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/arprobe.html">arprobe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/arpscan.html">arpscan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/garp.html">garp</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/arptools.html">arptools</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Urls</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/x55xaa/arptools">Github</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">arptools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">arptools.arp.pscan</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for arptools.arp.pscan</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Provides functions to do a network scan with ARP packets.&quot;&quot;&quot;</span>
+
+<span class="c1"># Copyright (C) 2024  Stefano Cuizza</span>
+
+<span class="c1">#     This program is free software: you can redistribute it and/or modify</span>
+<span class="c1">#     it under the terms of the GNU General Public License as published by</span>
+<span class="c1">#     the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1">#     (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1">#     This program is distributed in the hope that it will be useful,</span>
+<span class="c1">#     but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1">#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1">#     GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1">#     You should have received a copy of the GNU General Public License</span>
+<span class="c1">#     along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
+
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">ipaddress</span> <span class="kn">import</span> <span class="n">ip_address</span><span class="p">,</span> <span class="n">ip_network</span>
+<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">SimpleQueue</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">Event</span>
+
+
+<span class="kn">from</span> <span class="nn">asciimatics.event</span> <span class="kn">import</span> <span class="n">KeyboardEvent</span>
+<span class="kn">from</span> <span class="nn">asciimatics.exceptions</span> <span class="kn">import</span> <span class="n">ResizeScreenError</span>
+<span class="kn">from</span> <span class="nn">asciimatics.scene</span> <span class="kn">import</span> <span class="n">Scene</span>
+<span class="kn">from</span> <span class="nn">asciimatics.screen</span> <span class="kn">import</span> <span class="n">ManagedScreen</span><span class="p">,</span> <span class="n">Screen</span>
+<span class="kn">from</span> <span class="nn">asciimatics.widgets</span> <span class="kn">import</span> <span class="n">Frame</span>
+<span class="kn">from</span> <span class="nn">scapy.layers.l2</span> <span class="kn">import</span> <span class="n">ARP</span><span class="p">,</span> <span class="n">Ether</span>
+<span class="kn">from</span> <span class="nn">scapy.sendrecv</span> <span class="kn">import</span> <span class="n">sniff</span>
+
+<span class="kn">from</span> <span class="nn">..modules.ansi</span> <span class="kn">import</span> <span class="n">Cursor</span><span class="p">,</span> <span class="n">echo_ansi</span><span class="p">,</span> <span class="n">fg_rgb</span><span class="p">,</span> <span class="n">Fore</span>
+<span class="kn">from</span> <span class="nn">..modules.ascii.animation</span> <span class="kn">import</span> <span class="n">Animation</span>
+<span class="kn">from</span> <span class="nn">..modules.utils</span> <span class="kn">import</span> <span class="n">ExpirableDict</span>
+<span class="kn">from</span> <span class="nn">..network</span> <span class="kn">import</span> <span class="n">get_default_gateway</span><span class="p">,</span> <span class="n">get_local_ip</span>
+
+
+<span class="k">class</span> <span class="nc">MappingModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data model that holds the MAC/IP associations extracted from sniffed ARP packets.&quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">StoppableThread</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Thread class with a stop() method.</span>
+
+<span class="sd">        The thread itself has to check regularly for the stopped() condition.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Stops the thread.&quot;&quot;&quot;</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">stopped</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Whether the thread has been stopped or not.&quot;&quot;&quot;</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_range</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ttl</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Args:</span>
+<span class="sd">            target_range:</span>
+<span class="sd">                the target IP range, in CIDR notation.</span>
+<span class="sd">            ttl:</span>
+<span class="sd">                initial time to live for a new mapping, in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_range</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ttl</span> <span class="o">=</span> <span class="n">target_range</span><span class="p">,</span> <span class="n">ttl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span> <span class="o">=</span> <span class="n">ExpirableDict</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="n">ttl</span><span class="p">),</span> <span class="n">SimpleQueue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_requests</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sniff_thread</span><span class="p">:</span> <span class="n">MappingModel</span><span class="o">.</span><span class="n">StoppableThread</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">start_gatherer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Starts the ARP sniffer as a background thread.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_sniffer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sniff_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">stop_gatherer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stops the ARP sniffer.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sniff_thread</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sniff_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_gatherer_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether the ARP sniffer thread is alive.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sniff_thread</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sniff_thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ttl</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The time to live for every ARP request.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ttl</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">requests</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The total number of sniffed ARP requests (excluding probes).&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_requests</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">db</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExpirableDict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The internal mapping database.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span>
+
+    <span class="k">def</span> <span class="nf">_init_sniffer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sniff_thread</span> <span class="o">=</span> <span class="n">MappingModel</span><span class="o">.</span><span class="n">StoppableThread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">sniff</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;filter&#39;</span><span class="p">:</span> <span class="s1">&#39;arp&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;prn&#39;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arp_monitor_callback</span><span class="p">,</span> <span class="n">ip_range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_range</span><span class="p">),</span>
+            <span class="s1">&#39;stop_filter&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sniff_thread</span><span class="o">.</span><span class="n">stopped</span><span class="p">(),</span>
+            <span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_requests</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">_arp_monitor_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pkt</span><span class="p">,</span> <span class="n">ip_range</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ARP</span> <span class="ow">in</span> <span class="n">pkt</span> <span class="ow">and</span> <span class="n">pkt</span><span class="p">[</span><span class="n">ARP</span><span class="p">]</span><span class="o">.</span><span class="n">op</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,):</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">ip_address</span><span class="p">(</span><span class="n">pkt</span><span class="p">[</span><span class="n">ARP</span><span class="p">]</span><span class="o">.</span><span class="n">psrc</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ip_network</span><span class="p">(</span><span class="n">ip_range</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">pkt</span><span class="p">[</span><span class="n">ARP</span><span class="p">]</span><span class="o">.</span><span class="n">psrc</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">,):</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_requests</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">[</span><span class="n">pkt</span><span class="p">[</span><span class="n">Ether</span><span class="p">]</span><span class="o">.</span><span class="n">hwsrc</span><span class="p">]</span> <span class="o">=</span> <span class="n">pkt</span><span class="p">[</span><span class="n">ARP</span><span class="p">]</span><span class="o">.</span><span class="n">psrc</span>
+
+
+<span class="k">class</span> <span class="nc">MainView</span><span class="p">(</span><span class="n">Frame</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main view for the passive scan TUI.&quot;&quot;&quot;</span>
+
+    <span class="n">_TTL_GRADIENT</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">fg_rgb</span><span class="p">(</span><span class="mi">102</span><span class="p">,</span> <span class="mi">102</span><span class="p">,</span> <span class="mi">102</span><span class="p">),</span>
+        <span class="n">fg_rgb</span><span class="p">(</span><span class="mi">153</span><span class="p">,</span> <span class="mi">153</span><span class="p">,</span> <span class="mi">153</span><span class="p">),</span>
+        <span class="n">fg_rgb</span><span class="p">(</span><span class="mi">204</span><span class="p">,</span> <span class="mi">204</span><span class="p">,</span> <span class="mi">204</span><span class="p">),</span>
+        <span class="n">fg_rgb</span><span class="p">(</span><span class="mi">225</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="mi">225</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">_LG_ENTRY_COLOR</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Fore</span><span class="o">.</span><span class="n">LIGHTMAGENTA_EX</span>
+    <span class="n">_LI_ENTRY_COLOR</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Fore</span><span class="o">.</span><span class="n">LIGHTGREEN_EX</span>
+
+    <span class="n">_FOOTER</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;  &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">●&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">_TTL_GRADIENT</span><span class="p">)</span><span class="si">}{</span><span class="n">Fore</span><span class="o">.</span><span class="n">RESET</span><span class="si">}</span><span class="s1">: ttl&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_LG_ENTRY_COLOR</span><span class="si">}</span><span class="s1">●</span><span class="si">{</span><span class="n">Fore</span><span class="o">.</span><span class="n">RESET</span><span class="si">}</span><span class="s1">: gateway&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_LI_ENTRY_COLOR</span><span class="si">}</span><span class="s1">●</span><span class="si">{</span><span class="n">Fore</span><span class="o">.</span><span class="n">RESET</span><span class="si">}</span><span class="s1">: local ip&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;↑: scroll up&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;↓: scroll down&#39;</span><span class="p">,</span>
+    <span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">MappingModel</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Args:</span>
+<span class="sd">            screen:</span>
+<span class="sd">                screen instance.</span>
+<span class="sd">            model:</span>
+<span class="sd">                data model to hold passive scan data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">assoc_counter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">db</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">screen</span><span class="o">=</span><span class="n">screen</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">screen</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">screen</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+            <span class="n">has_border</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;ARP requests</span><span class="si">{</span><span class="sa">f</span><span class="s1">&#39; | </span><span class="si">{</span><span class="n">assoc_counter</span><span class="si">}</span><span class="s1"> / </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">requests</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="n">assoc_counter</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">:</span> <span class="n">MappingModel</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frame_update_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ttl_animation</span> <span class="o">=</span> <span class="n">Animation</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_TTL_GRADIENT</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fix</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">palette</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="p">(</span><span class="n">Screen</span><span class="o">.</span><span class="n">COLOUR_WHITE</span><span class="p">,</span> <span class="n">Screen</span><span class="o">.</span><span class="n">A_NORMAL</span><span class="p">,</span> <span class="n">Screen</span><span class="o">.</span><span class="n">COLOUR_BLACK</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">palette</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">Screen</span><span class="o">.</span><span class="n">COLOUR_WHITE</span><span class="p">,</span> <span class="n">Screen</span><span class="o">.</span><span class="n">A_BOLD</span><span class="p">,</span> <span class="n">Screen</span><span class="o">.</span><span class="n">COLOUR_BLACK</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">KeyboardEvent</span><span class="p">):</span>
+            <span class="k">match</span> <span class="n">event</span><span class="o">.</span><span class="n">key_code</span><span class="p">:</span>
+                <span class="k">case</span> <span class="o">-</span><span class="mi">204</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">scroll_up</span><span class="p">()</span>
+                <span class="k">case</span> <span class="o">-</span><span class="mi">206</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">scroll_down</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">scroll_down</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Scrolls down the display window.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_index</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">db</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">scroll_up</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Scrolls up the display window.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_index</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">_clear_display_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">height</span><span class="p">):</span>
+            <span class="n">echo_ansi</span><span class="p">(</span><span class="n">Cursor</span><span class="o">.</span><span class="n">POS</span><span class="p">)(</span><span class="mi">3</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">5</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_no</span><span class="p">):</span>
+        <span class="n">assoc_counter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">db</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;ARP requests</span><span class="si">{</span><span class="sa">f</span><span class="s1">&#39; | </span><span class="si">{</span><span class="n">assoc_counter</span><span class="si">}</span><span class="s1"> / </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">requests</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">assoc_counter</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+
+        <span class="n">sorted_db</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">ip_address</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clear_display_window</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">hwsrc</span><span class="p">,</span> <span class="n">psrc</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">height</span><span class="p">),</span>
+                <span class="nb">tuple</span><span class="p">(</span><span class="n">sorted_db</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_index</span><span class="p">:],</span>
+        <span class="p">):</span>
+            <span class="n">cttl</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_expiration_date</span><span class="p">(</span><span class="n">hwsrc</span><span class="p">)</span> <span class="o">-</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+
+            <span class="n">line_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ttl_animation</span><span class="o">.</span><span class="n">frame_from_state</span><span class="p">(</span><span class="n">cttl</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">ttl</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">psrc</span> <span class="o">==</span> <span class="n">get_default_gateway</span><span class="p">():</span>
+                <span class="n">line_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_LG_ENTRY_COLOR</span>
+            <span class="k">elif</span> <span class="n">psrc</span> <span class="o">==</span> <span class="n">get_local_ip</span><span class="p">():</span>
+                <span class="n">line_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_LI_ENTRY_COLOR</span>
+
+            <span class="n">echo_ansi</span><span class="p">(</span><span class="n">Cursor</span><span class="o">.</span><span class="n">POS</span><span class="p">)(</span><span class="mi">3</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">line_color</span><span class="si">}{</span><span class="n">hwsrc</span><span class="si">}</span><span class="s1"> &lt;== </span><span class="si">{</span><span class="n">psrc</span><span class="si">}{</span><span class="n">Fore</span><span class="o">.</span><span class="n">RESET</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">frame_no</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_render_footer</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_render_footer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">footer_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">66</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">x_pos</span> <span class="o">:=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="n">footer_length</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">echo_ansi</span><span class="p">(</span><span class="n">Cursor</span><span class="o">.</span><span class="n">POS</span><span class="p">)(</span><span class="n">x_pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_FOOTER</span><span class="si">}</span><span class="s1"> &#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">frame_update_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of frames before this Effect should be updated.&quot;&quot;&quot;</span>
+
+        <span class="c1"># by making frame_update_count refer to an actual class variable, it can</span>
+        <span class="c1"># be dynamically modified to change the refresh rate of the frame.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_update_count</span>
+
+    <span class="nd">@frame_update_count</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">frame_update_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frame_update_count</span> <span class="o">=</span> <span class="n">value</span>
+
+
+<span class="k">class</span> <span class="nc">PassiveScanTUI</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager that provides a nice TUI for the passive ARP scanner.</span>
+
+<span class="sd">    Typical usage:</span>
+<span class="sd">        with PassiveScanTUI(model) as tui:</span>
+<span class="sd">            tui.show()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">MappingModel</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Args:</span>
+<span class="sd">            model:</span>
+<span class="sd">                data model to hold passive scan data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
+
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interactive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Starts the TUI.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">is_gatherer_alive</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">start_gatherer</span><span class="p">()</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">ManagedScreen</span><span class="p">()</span> <span class="k">as</span> <span class="n">screen</span><span class="p">:</span>
+                    <span class="n">scenes</span> <span class="o">=</span> <span class="p">(</span><span class="n">Scene</span><span class="p">([</span><span class="n">MainView</span><span class="p">(</span><span class="n">screen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)],</span> <span class="o">-</span><span class="mi">1</span><span class="p">),)</span>
+                    <span class="n">screen</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">scenes</span><span class="p">,</span> <span class="n">stop_on_resize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="n">ResizeScreenError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">interactive</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">stop_gatherer</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="arp_pscan">
+<a class="viewcode-back" href="../../../_autosummary/arptools.html#arptools.arp_pscan">[docs]</a>
+<span class="k">def</span> <span class="nf">arp_pscan</span><span class="p">(</span><span class="n">target_range</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ttl</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Performs a passive scan of the network by extracting MAC/IP pairs</span>
+<span class="sd">    from broadcast ARP requests.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target_range:</span>
+<span class="sd">            the target IP range, in CIDR notation.</span>
+<span class="sd">        ttl:</span>
+<span class="sd">            initial time to live for a new mapping, in seconds.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">MappingModel</span><span class="p">(</span><span class="n">target_range</span><span class="p">,</span> <span class="n">ttl</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">PassiveScanTUI</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="k">as</span> <span class="n">tui</span><span class="p">:</span>
+            <span class="n">tui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">hwsrc</span><span class="p">,</span> <span class="n">psrc</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">hwsrc</span><span class="si">}</span><span class="s1"> &lt;== </span><span class="si">{</span><span class="n">psrc</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 Stefano Cuizza.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
