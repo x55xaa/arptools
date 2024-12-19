@@ -47,7 +47,7 @@ class Arprobe(MainArgumentParserTemplate):
     def __init__(self):
         super().__init__(
             prog='arprobe',
-            description='Send ARP probe requests.',
+            description='Send ARP probes.',
             prefix_chars='-',
         )
 
