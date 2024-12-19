@@ -21,7 +21,7 @@ from typing import Optional
 from scapy.layers.l2 import ARP, Ether
 from scapy.packet import Packet
 from scapy.plist import PacketList, QueryAnswer, SndRcvList
-from scapy.sendrecv import sendp, srploop, srp
+from scapy.sendrecv import srploop, srp
 
 from . import _prn, _prnfail
 
