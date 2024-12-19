@@ -54,6 +54,19 @@ def arp_probe(
         verbose: Optional[int] = None,
 ) -> None: ...
 
+def arp_reply(
+        target_ip: str,
+        ethernet_src: Optional[str] = None,
+        ethernet_dst: Optional[str] = None,
+        arp_hwsrc: Optional[str] = None,
+        arp_psrc: Optional[str] = None,
+        count: int = 0,
+        interval: float = 1.0,
+        verbose: Optional[int] = None,
+        prn: Callable[[QueryAnswer], str | None] = _prn,
+        prnfail: Callable[[Packet | PacketList | SndRcvList], str | None] = _prnfail,
+) -> None: ...
+
 def arp_request(
         target_ip: str,
         ethernet_src: Optional[str] = None,

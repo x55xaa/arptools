@@ -22,6 +22,7 @@ from .arp import (
     arp_announcement,
     arp_probe,
     arp_pscan,
+    arp_reply,
     arp_request,
     arp_scan,
 )
@@ -34,6 +35,7 @@ __all__ = [
     'arp_announcement',
     'arp_probe',
     'arp_pscan',
+    'arp_reply',
     'arp_request',
     'arp_scan',
 ]
